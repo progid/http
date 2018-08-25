@@ -17,7 +17,7 @@ var XMLHttpRequestProvider = (function() {
 		};
 	};
 
-	function C(descr, o) {
+	var C = function(descr, o) {
 		descr = descr || 'JustCopy';
 		o = o || {};
 		this.config = {
@@ -74,31 +74,24 @@ var XMLHttpRequestProvider = (function() {
 				.replace(/\"/g, '')
 				.slice(1,-1));
 			var path = url.path + (url.search ? url.search : '?') + tempStr;
-			alert(path);
 		}
 		xhr.open(url.method, url.path + (url.search || body), this.config.async);
+		xhr.addEventListener('readystatechange', function() {
 
+		}, true);
 		return {
 			xhr: xhr,
-			request: function() {
-				return xhr.send(body)
-			}
+			headers: headers,
+			body: body,
+			toRequest: function() { return xhr.send(body) }
 		};
 	}
 
 	C.prototype.request = function(where, headers, body) {
-		var xhr = new XMLHttpRequest();
-
-		xhr.open('GET', where, true)
-		xhr.addEventListener('readystatechange', function() {
-			if(xhr.readyState === 4) {
-				alert(xhr.response);
-			}
-		}, true);
-
-		//this.mock(where, headers,body).request();
-		xhr.send();
+		return this.mock(where, headers,body).toRequest();
     };
+
+    C.prototype.
 
     // C.test = parseWhereStr;
     
